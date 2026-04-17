@@ -1,4 +1,4 @@
-package main
+package cs390finalproject
 
 import (
 	"fmt"
