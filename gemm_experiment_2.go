@@ -72,7 +72,7 @@ func (s SplitMethod) String() string {
 }
 
 // ─────────────────────────────────────────────
-// Matrix: using gonum/mat 
+// Matrix: using gonum/mat library to get true parallel matrix ops
 // ─────────────────────────────────────────────
 
 // return a new empty matrix 
@@ -95,7 +95,6 @@ func Shape(m *mat.Dense) string {
 	return fmt.Sprintf("(%d×%d)", r, c)
 }
 
-// TODO: apparently this is the wrong way to get this error metric
 // frobeniusError returns ‖a - b‖_F / ‖b‖_F (relative error).
 func frobeniusError(a, b *mat.Dense) float64 {
 	var diff mat.Dense
@@ -109,7 +108,7 @@ func frobeniusError(a, b *mat.Dense) float64 {
 }
 
 // ─────────────────────────────────────────────
-// SECTION 3: Matrix operations
+// Matrix operations
 // ─────────────────────────────────────────────
 
 // MatMul computes C = A X B
@@ -170,7 +169,7 @@ func AllReduce(parts []*mat.Dense) (*mat.Dense, CommunicationEvent) {
 }
 
 // ─────────────────────────────────────────────
-// SECTION 4: Partitioning helpers
+// Partitioning helpers
 // ─────────────────────────────────────────────
 
 // SplitColumns splits matrix M into `n` column-wise partitions.
@@ -685,6 +684,7 @@ func printReport(cfg ExperimentConfig, results []MLPResult) {
 // ─────────────────────────────────────────────
 
 func main() {
+	fmt.Print("Experiment A: small model \n")
 	// ── Experiment A: small, easy to follow ──────────────────────────────────
 	runExperiment(ExperimentConfig{
 		BatchSize: 4,
@@ -695,6 +695,7 @@ func main() {
 		Seed:      42,
 	})
 
+	fmt.Print("Experiment B: medium model, more GPUS helps \n")
 	// ── Experiment B: larger hidden dim, 4 GPUs ───────────────────────────────
 	runExperiment(ExperimentConfig{
 		BatchSize: 8,
@@ -705,13 +706,36 @@ func main() {
 		Seed:      7,
 	})
 
+	fmt.Print("Experiment C: large model, more GPUS really helps \n")
 	// ── Experiment C: near transformer scale, 8 GPUs ─────────────────────────
 	runExperiment(ExperimentConfig{
-		BatchSize: 16,
+		BatchSize: 8,
 		DIn:       512,
 		DHidden:   2048,
 		DOut:      512,
 		NumGPU:    8,
+		Seed:      99,
+	})
+
+	fmt.Print("Experiment D: large model with 16 GPUs \n")
+	// ── Experiment D: near transformer scale, 16 GPUs ─────────────────────────
+	runExperiment(ExperimentConfig{
+		BatchSize: 24,
+		DIn:       512,
+		DHidden:   2048,
+		DOut:      512,
+		NumGPU:    16,
+		Seed:      99,
+	})
+
+	fmt.Print("Experiment D: large model with 24 GPUs \n")
+	// ── Experiment E: near transformer scale, 24 GPUs ─────────────────────────
+	runExperiment(ExperimentConfig{
+		BatchSize: 24,
+		DIn:       512,
+		DHidden:   2048,
+		DOut:      512,
+		NumGPU:    32,
 		Seed:      99,
 	})
 }
