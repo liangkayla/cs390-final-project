@@ -175,36 +175,65 @@ func AllReduce(parts []*mat.Dense) (*mat.Dense, CommunicationEvent) {
 
 // SplitColumns splits matrix M into `n` column-wise partitions.
 // M has shape (r, c); each partition has shape (r, c/n).
+// func SplitColumns(M *mat.Dense, n int) []*mat.Dense {
+// 	r, c := M.Dims()
+// 	if c%n != 0 {
+// 		panic("cols not divisible")
+// 	}
+
+// 	w := c / n
+// 	parts := make([]*mat.Dense, n)
+
+// 	for i := 0; i < n; i++ {
+// 		parts[i] = M.Slice(0, r, i*w, (i+1)*w).(*mat.Dense)
+// 	}
+// 	return parts
+// }
+
 func SplitColumns(M *mat.Dense, n int) []*mat.Dense {
-	r, c := M.Dims()
-	if c%n != 0 {
-		panic("cols not divisible")
-	}
-
-	w := c / n
-	parts := make([]*mat.Dense, n)
-
-	for i := 0; i < n; i++ {
-		parts[i] = M.Slice(0, r, i*w, (i+1)*w).(*mat.Dense)
-	}
-	return parts
+    r, c := M.Dims()
+    if c%n != 0 {
+        panic("cols not divisible")
+    }
+    w := c / n
+    parts := make([]*mat.Dense, n)
+    for i := 0; i < n; i++ {
+        part := mat.NewDense(r, w, nil)
+        part.CloneFrom(M.Slice(0, r, i*w, (i+1)*w))  // ← copy, not view
+        parts[i] = part
+    }
+    return parts
 }
 
 // SplitRows splits matrix M into `n` row-wise partitions.
 // M has shape (r, c); each partition has shape (r/n, c).
+// func SplitRows(M *mat.Dense, n int) []*mat.Dense {
+// 	r, c := M.Dims()
+// 	if r%n != 0 {
+// 		panic("rows not divisible")
+// 	}
+
+// 	h := r / n
+// 	parts := make([]*mat.Dense, n)
+
+// 	for i := 0; i < n; i++ {
+// 		parts[i] = M.Slice(i*h, (i+1)*h, 0, c).(*mat.Dense)
+// 	}
+// 	return parts
+// }
 func SplitRows(M *mat.Dense, n int) []*mat.Dense {
-	r, c := M.Dims()
-	if r%n != 0 {
-		panic("rows not divisible")
-	}
-
-	h := r / n
-	parts := make([]*mat.Dense, n)
-
-	for i := 0; i < n; i++ {
-		parts[i] = M.Slice(i*h, (i+1)*h, 0, c).(*mat.Dense)
-	}
-	return parts
+    r, c := M.Dims()
+    if r%n != 0 {
+        panic("rows not divisible")
+    }
+    h := r / n
+    parts := make([]*mat.Dense, n)
+    for i := 0; i < n; i++ {
+        part := mat.NewDense(h, c, nil)
+        part.CloneFrom(M.Slice(i*h, (i+1)*h, 0, c))  // ← copy, not view
+        parts[i] = part
+    }
+    return parts
 }
 
 // ConcatColumns concatenates matrices horizontally: [M1 | M2 | ...] → (r, sum(c_i))
@@ -299,10 +328,11 @@ func groundTruth(X, A, B *mat.Dense) *mat.Dense {
 //     Z   = AllReduce(Z_0,...,Z_n) ← single all-reduce
 //
 // This is Figure 3a of the Megatron-LM paper.
+// TODO: check if correct num of syncPts
 func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
     events := []CommunicationEvent{}
 	computeTimes := make([]float64, numGPU)
-    syncPts := 0
+    syncPts := 1 //function g in the paper is allReduce on forward pass, function f allReduce in backward pass
 
     // Partition weights
     As := SplitColumns(A, numGPU)
@@ -347,10 +377,9 @@ func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 	}
 	wg.Wait()	
 
-    // ── AllReduce
+    // ── AllReduce, number of syncpts this contributes to is accounted for in beginning
     Z, ev := AllReduce(Zparts)
     events = append(events, ev)
-    syncPts++
 
     totalBytes := 0
 	totalCommTime := 0.0
@@ -384,6 +413,116 @@ func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
     return MLPResult{
         StrategyName: "Paper Optimal (col-split A, row-split B)",
         Description:  "Parallel GEMMs + 1 AllReduce",
+        Output:       Z,
+        CommEvents:   events,
+        SyncPoints:   syncPts,
+        TotalCommBytes: totalBytes,
+		Metrics: metrics,
+    }
+}
+
+// ── Row-split A, column split X ──────────────────
+//	"Row-Split" method
+//   GPU_i receives: X_i (columns), A_j (rows), B_i (rows)
+//   Forward:
+//     Y_i = GeLU(X · A_i)          ← no sync needed before GeLU
+//     Z_i = Y_i · B_i              ← each GPU holds partial output
+//     Z   = AllReduce(Z_0,...,Z_n) ← single all-reduce
+//
+// Mentioned in Megatron-LM paper as suboptimal 
+func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
+    events := []CommunicationEvent{}
+	computeTimes := make([]float64, numGPU)
+    syncPts := 1
+
+    // Partition weights:
+	//   X split by cols  (inner dimension) → each GPU holds a col shard X_i
+	//   A split by rows  (inner dimension) → each GPU holds a row shard A_i
+	//   X_i and A_i are matched shards: X_i is (m × k/n), A_i is (k/n × h)
+	//   B split by cols                   → each GPU holds a col shard B_i
+	As := SplitRows(A, numGPU)
+	Bs := SplitColumns(B, numGPU)
+	Xs := SplitColumns(X, numGPU)
+
+    Yparts := make([]*mat.Dense, numGPU) //here, we have to sum the intermediate Ys before passing it to GeLU
+	Zparts := make([]*mat.Dense, numGPU)
+
+    // ── Stage 1: X_i·A_i (parallel)
+    var wg sync.WaitGroup
+
+	//1a: compute intermediate Y matrices
+	for i := 0; i < numGPU; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			start := time.Now()
+			Yi := MatMul(Xs[i], As[i]) // ← Xs[i] instead of full X
+			computeTimes[i] = time.Since(start).Seconds()
+			Yparts[i] = Yi
+		}(i)
+	}
+	wg.Wait()	
+
+	// ── Stage 1b: AllReduce + GeLU ────────────────────────────────────────────
+	// Sum partial Ys across GPUs to get the true XA, then apply GeLU.
+	// This is the unavoidable mid-block sync that makes this approach suboptimal.
+	Yfull, ev := AllReduce(Yparts)
+	events = append(events, ev)
+	syncPts++
+	geluY := GeLU(Yfull)
+
+    // ── Stage 2: Y·B_i (parallel) ────────────────────────────────────────────
+	// Every GPU holds the full Y = GeLU(XA). Each multiplies by its B col-shard
+	// independently — no sync needed. Outputs are column partitions of the
+	// final result and are concatenated horizontally to form Z.
+	for i := 0; i < numGPU; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			start := time.Now()
+			var C mat.Dense
+			C.Mul(geluY, Bs[i])
+			computeTimes[i] += time.Since(start).Seconds()
+			Zparts[i] = &C
+		}(i)
+	}
+	wg.Wait()
+
+	// Concatenate column shards horizontally → final output Z (shape m×c)
+	Z := ConcatColumns(Zparts) //AllReduce already counted in beginning
+
+    totalBytes := 0
+	totalCommTime := 0.0
+    for _, e := range events {
+        totalBytes += e.BytesPerGPU * e.NumGPUs
+		totalCommTime += e.CommTime
+    }
+
+	r, k := X.Dims()
+	_, h := A.Dims()
+	_, c := B.Dims()
+	
+	flopsGEMM1 := gemmFLOPs(r, h/numGPU, k) * float64(numGPU)
+	flopsGEMM2 := gemmFLOPs(r, c, h/numGPU) * float64(numGPU)
+
+	totalFLOPs := flopsGEMM1 + flopsGEMM2
+
+	maxComputeTime := 0.0
+	for _, t := range computeTimes {
+		if t > maxComputeTime {
+			maxComputeTime = t
+		}
+	}
+
+	metrics := Metrics{
+		FLOPs: totalFLOPs,
+		ComputeTime: maxComputeTime,
+		TotalCommTime: totalCommTime,
+	}
+
+    return MLPResult{
+        StrategyName: "Paper Suboptimal (row-split A, col-split B)",
+        Description:  "Parallel GEMMs + AllReduce before GeLU + parallel GEMMs, output col-concatenated",
         Output:       Z,
         CommEvents:   events,
         SyncPoints:   syncPts,
@@ -427,7 +566,7 @@ func strategyNoSplit(X, A, B *mat.Dense, numGPU int) MLPResult {
 }
 
 // ─────────────────────────────────────────────
-// SECTION 7: Experiment runner & reporting
+// Experiment runner & reporting
 // ─────────────────────────────────────────────
 
 // ExperimentConfig holds the dimensions for the experiment.
@@ -459,6 +598,7 @@ func runExperiment(cfg ExperimentConfig) {
 	strategies := []MLPResult{
 		strategyNoSplit(X, A, B, 1),
 		strategyPaperOptimal(X, A, B, cfg.NumGPU),
+		strategyPaperSuboptimal(X, A, B, cfg.NumGPU),
 	}
 
 	const errThreshold = 1e-9
@@ -541,7 +681,7 @@ func printReport(cfg ExperimentConfig, results []MLPResult) {
 }
 
 // ─────────────────────────────────────────────
-// SECTION 8: main — tunable experiments
+//  main — tunable experiments
 // ─────────────────────────────────────────────
 
 func main() {
