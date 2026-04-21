@@ -16,6 +16,7 @@ type Metrics struct {
 	FLOPs	float64
 	ComputeTime	float64
 	TotalCommTime	float64
+	TotalTime float64
 }
 
 type CommunicationEvent struct {
@@ -407,6 +408,7 @@ func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 		FLOPs: totalFLOPs,
 		ComputeTime: maxComputeTime,
 		TotalCommTime: totalCommTime,
+		TotalTime: maxComputeTime+totalCommTime,
 	}
 
     return MLPResult{
@@ -517,6 +519,7 @@ func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 		FLOPs: totalFLOPs,
 		ComputeTime: maxComputeTime,
 		TotalCommTime: totalCommTime,
+		TotalTime: maxComputeTime+totalCommTime,
 	}
 
     return MLPResult{
@@ -551,6 +554,7 @@ func strategyNoSplit(X, A, B *mat.Dense, numGPU int) MLPResult {
         FLOPs: flops,
         ComputeTime: computeTime,
         TotalCommTime: 0,
+		TotalTime: computeTime,
     }
 
     return MLPResult{
@@ -635,8 +639,9 @@ func printReport(cfg ExperimentConfig, results []MLPResult) {
 
 		// Metrics table
 		fmt.Printf("    FLOPs            : %.3e\n", r.Metrics.FLOPs)
-		fmt.Printf("    Compute time     : %.6f s\n", r.Metrics.ComputeTime)
-		fmt.Printf("    Comm time        : %.6f s\n", r.Metrics.TotalCommTime)
+		fmt.Printf("    Compute time     : %.6f ms\n", r.Metrics.ComputeTime*math.Pow10(3))
+		fmt.Printf("    Comm time        : %.6f ms\n", r.Metrics.TotalCommTime*math.Pow10(3))
+		fmt.Printf("    Total time       : %.6f ms\n", r.Metrics.TotalTime*math.Pow10(3))
 		fmt.Printf("    Sync points      : %d\n", r.SyncPoints)
 		fmt.Printf("    Total comm data  : %.3f MB\n", r.TotalCommMB())
 		fmt.Printf("    Relative error   : %.2e  ", r.RelativeError)
@@ -648,35 +653,6 @@ func printReport(cfg ExperimentConfig, results []MLPResult) {
 		}
 	}
 
-	// Summary comparison table
-	fmt.Println()
-	fmt.Println(strings.Repeat("═", 100))
-	fmt.Println("  SUMMARY TABLE")
-	fmt.Println(strings.Repeat("═", 100))
-	fmt.Printf("  %-30s %-6s %-10s %-10s %-10s %-10s %s\n",
-    "Strategy", "Syncs", "CommMB", "Comp(s)", "Comm(s)", "Error", "Status")
-	fmt.Println("  " + strings.Repeat("-", 96))
-	for _, r := range results {
-		status := "✓ OK"
-		if !r.Correct {
-			status = "✗ WRONG"
-		}
-		fmt.Printf("  %-30s %-6d %-10.3f %-10.4f %-10.4f %-10.2e %s\n",
-			r.StrategyName,
-			r.SyncPoints,
-			r.TotalCommMB(),
-			r.Metrics.ComputeTime,
-			r.Metrics.TotalCommTime,
-			r.RelativeError,
-			status,
-		)
-	}
-	fmt.Println(strings.Repeat("═", 100))
-
-	// Analysis
-	fmt.Println()
-	fmt.Println("  ANALYSIS")
-	fmt.Println(sep)
 }
 
 // ─────────────────────────────────────────────
@@ -706,7 +682,7 @@ func main() {
 		Seed:      7,
 	})
 
-	fmt.Print("Experiment C: large model, more GPUS really helps \n")
+	fmt.Print("Experiment C: large model, more GPUS should help \n")
 	// ── Experiment C: near transformer scale, 8 GPUs ─────────────────────────
 	runExperiment(ExperimentConfig{
 		BatchSize: 8,
@@ -728,7 +704,7 @@ func main() {
 		Seed:      99,
 	})
 
-	fmt.Print("Experiment D: large model with 24 GPUs \n")
+	fmt.Print("Experiment E: large model with 24 GPUs \n")
 	// ── Experiment E: near transformer scale, 24 GPUs ─────────────────────────
 	runExperiment(ExperimentConfig{
 		BatchSize: 24,

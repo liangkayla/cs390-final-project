@@ -1,0 +1,218 @@
+Experiment A: small model 
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+  MEGATRON-LM MLP SPLIT STRATEGY EXPERIMENT
+  batch=4  d_in=8  d_hidden=16  d_out=8  gpus=2
+════════════════════════════════════════════════════════════════════════════════════════════════════
+
+[1] No Split (single GPU baseline)
+    Full computation on one GPU, no communication
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Communication : none
+    FLOPs            : 2.048e+03
+    Compute time     : 0.010000 ms
+    Comm time        : 0.000000 ms
+    Total time       : 0.010000 ms
+    Sync points      : 0
+    Total comm data  : 0.000 MB
+    Relative error   : 0.00e+00  ✓ CORRECT
+
+[2] Paper Optimal (col-split A, row-split B)
+    Parallel GEMMs + 1 AllReduce
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=2, bytes/gpu=512)
+    FLOPs            : 2.048e+03
+    Compute time     : 0.010083 ms
+    Comm time        : 0.009625 ms
+    Total time       : 0.019708 ms
+    Sync points      : 1
+    Total comm data  : 0.001 MB
+    Relative error   : 1.15e-16  ✓ CORRECT
+
+[3] Paper Suboptimal (row-split A, col-split B)
+    Parallel GEMMs + AllReduce before GeLU + parallel GEMMs, output col-concatenated
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=2, bytes/gpu=1024)
+    FLOPs            : 2.048e+03
+    Compute time     : 0.012042 ms
+    Comm time        : 0.002375 ms
+    Total time       : 0.014417 ms
+    Sync points      : 2
+    Total comm data  : 0.002 MB
+    Relative error   : 1.50e-16  ✓ CORRECT
+
+
+Experiment B: medium model, more GPUS helps 
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+  MEGATRON-LM MLP SPLIT STRATEGY EXPERIMENT
+  batch=8  d_in=64  d_hidden=256  d_out=64  gpus=4
+════════════════════════════════════════════════════════════════════════════════════════════════════
+
+[1] No Split (single GPU baseline)
+    Full computation on one GPU, no communication
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Communication : none
+    FLOPs            : 5.243e+05
+    Compute time     : 0.085125 ms
+    Comm time        : 0.000000 ms
+    Total time       : 0.085125 ms
+    Sync points      : 0
+    Total comm data  : 0.000 MB
+    Relative error   : 0.00e+00  ✓ CORRECT
+
+[2] Paper Optimal (col-split A, row-split B)
+    Parallel GEMMs + 1 AllReduce
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=4, bytes/gpu=8192)
+    FLOPs            : 5.243e+05
+    Compute time     : 0.034542 ms
+    Comm time        : 0.002792 ms
+    Total time       : 0.037334 ms
+    Sync points      : 1
+    Total comm data  : 0.031 MB
+    Relative error   : 5.68e-16  ✓ CORRECT
+
+[3] Paper Suboptimal (row-split A, col-split B)
+    Parallel GEMMs + AllReduce before GeLU + parallel GEMMs, output col-concatenated
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=4, bytes/gpu=32768)
+    FLOPs            : 5.243e+05
+    Compute time     : 0.031375 ms
+    Comm time        : 0.007667 ms
+    Total time       : 0.039042 ms
+    Sync points      : 2
+    Total comm data  : 0.125 MB
+    Relative error   : 4.55e-16  ✓ CORRECT
+
+
+
+Experiment C: large model, more GPUS should help 
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+  MEGATRON-LM MLP SPLIT STRATEGY EXPERIMENT
+  batch=8  d_in=512  d_hidden=2048  d_out=512  gpus=8
+════════════════════════════════════════════════════════════════════════════════════════════════════
+
+[1] No Split (single GPU baseline)
+    Full computation on one GPU, no communication
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Communication : none
+    FLOPs            : 3.355e+07
+    Compute time     : 1.500667 ms
+    Comm time        : 0.000000 ms
+    Total time       : 1.500667 ms
+    Sync points      : 0
+    Total comm data  : 0.000 MB
+    Relative error   : 0.00e+00  ✓ CORRECT
+
+[2] Paper Optimal (col-split A, row-split B)
+    Parallel GEMMs + 1 AllReduce
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=8, bytes/gpu=65536)
+    FLOPs            : 3.355e+07
+    Compute time     : 1.009625 ms
+    Comm time        : 0.023167 ms
+    Total time       : 1.032792 ms
+    Sync points      : 1
+    Total comm data  : 0.500 MB
+    Relative error   : 1.62e-15  ✓ CORRECT
+
+[3] Paper Suboptimal (row-split A, col-split B)
+    Parallel GEMMs + AllReduce before GeLU + parallel GEMMs, output col-concatenated
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=8, bytes/gpu=262144)
+    FLOPs            : 3.355e+07
+    Compute time     : 1.301291 ms
+    Comm time        : 0.077291 ms
+    Total time       : 1.378582 ms
+    Sync points      : 2
+    Total comm data  : 2.000 MB
+    Relative error   : 1.44e-15  ✓ CORRECT
+
+
+Experiment D: large model with 16 GPUs 
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+  MEGATRON-LM MLP SPLIT STRATEGY EXPERIMENT
+  batch=24  d_in=512  d_hidden=2048  d_out=512  gpus=16
+════════════════════════════════════════════════════════════════════════════════════════════════════
+
+[1] No Split (single GPU baseline)
+    Full computation on one GPU, no communication
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Communication : none
+    FLOPs            : 1.007e+08
+    Compute time     : 3.848333 ms
+    Comm time        : 0.000000 ms
+    Total time       : 3.848333 ms
+    Sync points      : 0
+    Total comm data  : 0.000 MB
+    Relative error   : 0.00e+00  ✓ CORRECT
+
+[2] Paper Optimal (col-split A, row-split B)
+    Parallel GEMMs + 1 AllReduce
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=16, bytes/gpu=196608)
+    FLOPs            : 1.007e+08
+    Compute time     : 2.457791 ms
+    Comm time        : 0.097250 ms
+    Total time       : 2.555041 ms
+    Sync points      : 1
+    Total comm data  : 3.000 MB
+    Relative error   : 1.55e-15  ✓ CORRECT
+
+[3] Paper Suboptimal (row-split A, col-split B)
+    Parallel GEMMs + AllReduce before GeLU + parallel GEMMs, output col-concatenated
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=16, bytes/gpu=786432)
+    FLOPs            : 1.007e+08
+    Compute time     : 3.120041 ms
+    Comm time        : 0.402291 ms
+    Total time       : 3.522332 ms
+    Sync points      : 2
+    Total comm data  : 12.000 MB
+    Relative error   : 1.38e-15  ✓ CORRECT
+
+
+Experiment E: large model with 24 GPUs 
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+  MEGATRON-LM MLP SPLIT STRATEGY EXPERIMENT
+  batch=24  d_in=512  d_hidden=2048  d_out=512  gpus=32
+════════════════════════════════════════════════════════════════════════════════════════════════════
+
+[1] No Split (single GPU baseline)
+    Full computation on one GPU, no communication
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Communication : none
+    FLOPs            : 1.007e+08
+    Compute time     : 4.156625 ms
+    Comm time        : 0.000000 ms
+    Total time       : 4.156625 ms
+    Sync points      : 0
+    Total comm data  : 0.000 MB
+    Relative error   : 0.00e+00  ✓ CORRECT
+
+[2] Paper Optimal (col-split A, row-split B)
+    Parallel GEMMs + 1 AllReduce
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=32, bytes/gpu=196608)
+    FLOPs            : 1.007e+08
+    Compute time     : 1.693126 ms
+    Comm time        : 0.186917 ms
+    Total time       : 1.880043 ms
+    Sync points      : 1
+    Total comm data  : 6.000 MB
+    Relative error   : 1.55e-15  ✓ CORRECT
+
+[3] Paper Suboptimal (row-split A, col-split B)
+    Parallel GEMMs + AllReduce before GeLU + parallel GEMMs, output col-concatenated
+────────────────────────────────────────────────────────────────────────────────────────────────────
+    Comm event #1 : AllReduce(gpus=32, bytes/gpu=786432)
+    FLOPs            : 1.007e+08
+    Compute time     : 1.895417 ms
+    Comm time        : 0.713000 ms
+    Total time       : 2.608417 ms
+    Sync points      : 2
+    Total comm data  : 24.000 MB
