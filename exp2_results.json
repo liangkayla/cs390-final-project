@@ -1,0 +1,1322 @@
+[
+  {
+    "stages": 2,
+    "microbatches": 1,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 33,
+    "theoretical_bubble_pct": 50,
+    "measured_bubble_pct": 51.515151515151516,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 16,
+        "idle_ms": 17,
+        "bubble_pct": 51.515151515151516
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 16,
+        "idle_ms": 17,
+        "bubble_pct": 51.515151515151516
+      }
+    ]
+  },
+  {
+    "stages": 2,
+    "microbatches": 2,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 49,
+    "theoretical_bubble_pct": 33.33333333333333,
+    "measured_bubble_pct": 32.6530612244898,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 33,
+        "idle_ms": 16,
+        "bubble_pct": 32.6530612244898
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 33,
+        "idle_ms": 16,
+        "bubble_pct": 32.6530612244898
+      }
+    ]
+  },
+  {
+    "stages": 2,
+    "microbatches": 4,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 83,
+    "theoretical_bubble_pct": 20,
+    "measured_bubble_pct": 20.481927710843372,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 66,
+        "idle_ms": 17,
+        "bubble_pct": 20.481927710843372
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 66,
+        "idle_ms": 17,
+        "bubble_pct": 20.481927710843372
+      }
+    ]
+  },
+  {
+    "stages": 2,
+    "microbatches": 8,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 149,
+    "theoretical_bubble_pct": 11.11111111111111,
+    "measured_bubble_pct": 11.409395973154362,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 132,
+        "idle_ms": 17,
+        "bubble_pct": 11.409395973154362
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 132,
+        "idle_ms": 17,
+        "bubble_pct": 11.409395973154362
+      }
+    ]
+  },
+  {
+    "stages": 2,
+    "microbatches": 16,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 279,
+    "theoretical_bubble_pct": 5.88235294117647,
+    "measured_bubble_pct": 6.093189964157706,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 262,
+        "idle_ms": 17,
+        "bubble_pct": 6.093189964157706
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 262,
+        "idle_ms": 17,
+        "bubble_pct": 6.093189964157706
+      }
+    ]
+  },
+  {
+    "stages": 2,
+    "microbatches": 32,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 547,
+    "theoretical_bubble_pct": 3.0303030303030303,
+    "measured_bubble_pct": 3.1078610603290677,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 530,
+        "idle_ms": 17,
+        "bubble_pct": 3.1078610603290677
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 530,
+        "idle_ms": 17,
+        "bubble_pct": 3.1078610603290677
+      }
+    ]
+  },
+  {
+    "stages": 4,
+    "microbatches": 1,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 66,
+    "theoretical_bubble_pct": 75,
+    "measured_bubble_pct": 75.75757575757575,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 16,
+        "idle_ms": 50,
+        "bubble_pct": 75.75757575757575
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 16,
+        "idle_ms": 50,
+        "bubble_pct": 75.75757575757575
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 16,
+        "idle_ms": 50,
+        "bubble_pct": 75.75757575757575
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 16,
+        "idle_ms": 50,
+        "bubble_pct": 75.75757575757575
+      }
+    ]
+  },
+  {
+    "stages": 4,
+    "microbatches": 2,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 82,
+    "theoretical_bubble_pct": 60,
+    "measured_bubble_pct": 60.06097560975609,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 33,
+        "idle_ms": 49,
+        "bubble_pct": 59.756097560975604
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 33,
+        "idle_ms": 49,
+        "bubble_pct": 59.756097560975604
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 33,
+        "idle_ms": 49,
+        "bubble_pct": 59.756097560975604
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 32,
+        "idle_ms": 50,
+        "bubble_pct": 60.97560975609756
+      }
+    ]
+  },
+  {
+    "stages": 4,
+    "microbatches": 4,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 117,
+    "theoretical_bubble_pct": 42.857142857142854,
+    "measured_bubble_pct": 43.58974358974359,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 66,
+        "idle_ms": 51,
+        "bubble_pct": 43.58974358974359
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 66,
+        "idle_ms": 51,
+        "bubble_pct": 43.58974358974359
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 66,
+        "idle_ms": 51,
+        "bubble_pct": 43.58974358974359
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 66,
+        "idle_ms": 51,
+        "bubble_pct": 43.58974358974359
+      }
+    ]
+  },
+  {
+    "stages": 4,
+    "microbatches": 8,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 182,
+    "theoretical_bubble_pct": 27.27272727272727,
+    "measured_bubble_pct": 27.335164835164836,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 132,
+        "idle_ms": 50,
+        "bubble_pct": 27.472527472527474
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 132,
+        "idle_ms": 50,
+        "bubble_pct": 27.472527472527474
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 133,
+        "idle_ms": 49,
+        "bubble_pct": 26.923076923076923
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 132,
+        "idle_ms": 50,
+        "bubble_pct": 27.472527472527474
+      }
+    ]
+  },
+  {
+    "stages": 4,
+    "microbatches": 16,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 314,
+    "theoretical_bubble_pct": 15.789473684210526,
+    "measured_bubble_pct": 16.082802547770697,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 264,
+        "idle_ms": 50,
+        "bubble_pct": 15.92356687898089
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 264,
+        "idle_ms": 50,
+        "bubble_pct": 15.92356687898089
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 263,
+        "idle_ms": 51,
+        "bubble_pct": 16.24203821656051
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 263,
+        "idle_ms": 51,
+        "bubble_pct": 16.24203821656051
+      }
+    ]
+  },
+  {
+    "stages": 4,
+    "microbatches": 32,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 580,
+    "theoretical_bubble_pct": 8.571428571428571,
+    "measured_bubble_pct": 8.706896551724139,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 530,
+        "idle_ms": 50,
+        "bubble_pct": 8.620689655172415
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 530,
+        "idle_ms": 50,
+        "bubble_pct": 8.620689655172415
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 529,
+        "idle_ms": 51,
+        "bubble_pct": 8.793103448275861
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 529,
+        "idle_ms": 51,
+        "bubble_pct": 8.793103448275861
+      }
+    ]
+  },
+  {
+    "stages": 8,
+    "microbatches": 1,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 133,
+    "theoretical_bubble_pct": 87.5,
+    "measured_bubble_pct": 87.96992481203007,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 16,
+        "idle_ms": 117,
+        "bubble_pct": 87.96992481203007
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 16,
+        "idle_ms": 117,
+        "bubble_pct": 87.96992481203007
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 16,
+        "idle_ms": 117,
+        "bubble_pct": 87.96992481203007
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 16,
+        "idle_ms": 117,
+        "bubble_pct": 87.96992481203007
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 16,
+        "idle_ms": 117,
+        "bubble_pct": 87.96992481203007
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 16,
+        "idle_ms": 117,
+        "bubble_pct": 87.96992481203007
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 16,
+        "idle_ms": 117,
+        "bubble_pct": 87.96992481203007
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 16,
+        "idle_ms": 117,
+        "bubble_pct": 87.96992481203007
+      }
+    ]
+  },
+  {
+    "stages": 8,
+    "microbatches": 2,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 151,
+    "theoretical_bubble_pct": 77.77777777777779,
+    "measured_bubble_pct": 78.06291390728478,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 33,
+        "idle_ms": 118,
+        "bubble_pct": 78.1456953642384
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 33,
+        "idle_ms": 118,
+        "bubble_pct": 78.1456953642384
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 34,
+        "idle_ms": 117,
+        "bubble_pct": 77.48344370860927
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 33,
+        "idle_ms": 118,
+        "bubble_pct": 78.1456953642384
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 33,
+        "idle_ms": 118,
+        "bubble_pct": 78.1456953642384
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 33,
+        "idle_ms": 118,
+        "bubble_pct": 78.1456953642384
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 33,
+        "idle_ms": 118,
+        "bubble_pct": 78.1456953642384
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 33,
+        "idle_ms": 118,
+        "bubble_pct": 78.1456953642384
+      }
+    ]
+  },
+  {
+    "stages": 8,
+    "microbatches": 4,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 181,
+    "theoretical_bubble_pct": 63.63636363636363,
+    "measured_bubble_pct": 63.81215469613259,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 65,
+        "idle_ms": 116,
+        "bubble_pct": 64.08839779005525
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 65,
+        "idle_ms": 116,
+        "bubble_pct": 64.08839779005525
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 65,
+        "idle_ms": 116,
+        "bubble_pct": 64.08839779005525
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 65,
+        "idle_ms": 116,
+        "bubble_pct": 64.08839779005525
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 66,
+        "idle_ms": 115,
+        "bubble_pct": 63.53591160220995
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 66,
+        "idle_ms": 115,
+        "bubble_pct": 63.53591160220995
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 66,
+        "idle_ms": 115,
+        "bubble_pct": 63.53591160220995
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 66,
+        "idle_ms": 115,
+        "bubble_pct": 63.53591160220995
+      }
+    ]
+  },
+  {
+    "stages": 8,
+    "microbatches": 8,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 246,
+    "theoretical_bubble_pct": 46.666666666666664,
+    "measured_bubble_pct": 46.64634146341463,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 132,
+        "idle_ms": 114,
+        "bubble_pct": 46.34146341463415
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 132,
+        "idle_ms": 114,
+        "bubble_pct": 46.34146341463415
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 132,
+        "idle_ms": 114,
+        "bubble_pct": 46.34146341463415
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 131,
+        "idle_ms": 115,
+        "bubble_pct": 46.7479674796748
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 131,
+        "idle_ms": 115,
+        "bubble_pct": 46.7479674796748
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 131,
+        "idle_ms": 115,
+        "bubble_pct": 46.7479674796748
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 131,
+        "idle_ms": 115,
+        "bubble_pct": 46.7479674796748
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 130,
+        "idle_ms": 116,
+        "bubble_pct": 47.15447154471545
+      }
+    ]
+  },
+  {
+    "stages": 8,
+    "microbatches": 16,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 381,
+    "theoretical_bubble_pct": 30.434782608695656,
+    "measured_bubble_pct": 30.511811023622048,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 265,
+        "idle_ms": 116,
+        "bubble_pct": 30.446194225721783
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 264,
+        "idle_ms": 117,
+        "bubble_pct": 30.708661417322837
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 264,
+        "idle_ms": 117,
+        "bubble_pct": 30.708661417322837
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 265,
+        "idle_ms": 116,
+        "bubble_pct": 30.446194225721783
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 265,
+        "idle_ms": 116,
+        "bubble_pct": 30.446194225721783
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 266,
+        "idle_ms": 115,
+        "bubble_pct": 30.183727034120732
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 265,
+        "idle_ms": 116,
+        "bubble_pct": 30.446194225721783
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 264,
+        "idle_ms": 117,
+        "bubble_pct": 30.708661417322837
+      }
+    ]
+  },
+  {
+    "stages": 8,
+    "microbatches": 32,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 640,
+    "theoretical_bubble_pct": 17.94871794871795,
+    "measured_bubble_pct": 17.8515625,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 526,
+        "idle_ms": 114,
+        "bubble_pct": 17.8125
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 526,
+        "idle_ms": 114,
+        "bubble_pct": 17.8125
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 526,
+        "idle_ms": 114,
+        "bubble_pct": 17.8125
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 527,
+        "idle_ms": 113,
+        "bubble_pct": 17.65625
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 526,
+        "idle_ms": 114,
+        "bubble_pct": 17.8125
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 525,
+        "idle_ms": 115,
+        "bubble_pct": 17.96875
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 525,
+        "idle_ms": 115,
+        "bubble_pct": 17.96875
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 525,
+        "idle_ms": 115,
+        "bubble_pct": 17.96875
+      }
+    ]
+  },
+  {
+    "stages": 16,
+    "microbatches": 1,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 264,
+    "theoretical_bubble_pct": 93.75,
+    "measured_bubble_pct": 93.98674242424245,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 15,
+        "idle_ms": 249,
+        "bubble_pct": 94.31818181818183
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 8,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 9,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 10,
+        "active_ms": 15,
+        "idle_ms": 249,
+        "bubble_pct": 94.31818181818183
+      },
+      {
+        "stage_id": 11,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 12,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 13,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 14,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      },
+      {
+        "stage_id": 15,
+        "active_ms": 16,
+        "idle_ms": 248,
+        "bubble_pct": 93.93939393939394
+      }
+    ]
+  },
+  {
+    "stages": 16,
+    "microbatches": 2,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 280,
+    "theoretical_bubble_pct": 88.23529411764706,
+    "measured_bubble_pct": 88.39285714285715,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 32,
+        "idle_ms": 248,
+        "bubble_pct": 88.57142857142857
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 32,
+        "idle_ms": 248,
+        "bubble_pct": 88.57142857142857
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 32,
+        "idle_ms": 248,
+        "bubble_pct": 88.57142857142857
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 32,
+        "idle_ms": 248,
+        "bubble_pct": 88.57142857142857
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 33,
+        "idle_ms": 247,
+        "bubble_pct": 88.21428571428571
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 33,
+        "idle_ms": 247,
+        "bubble_pct": 88.21428571428571
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 33,
+        "idle_ms": 247,
+        "bubble_pct": 88.21428571428571
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 33,
+        "idle_ms": 247,
+        "bubble_pct": 88.21428571428571
+      },
+      {
+        "stage_id": 8,
+        "active_ms": 33,
+        "idle_ms": 247,
+        "bubble_pct": 88.21428571428571
+      },
+      {
+        "stage_id": 9,
+        "active_ms": 33,
+        "idle_ms": 247,
+        "bubble_pct": 88.21428571428571
+      },
+      {
+        "stage_id": 10,
+        "active_ms": 32,
+        "idle_ms": 248,
+        "bubble_pct": 88.57142857142857
+      },
+      {
+        "stage_id": 11,
+        "active_ms": 32,
+        "idle_ms": 248,
+        "bubble_pct": 88.57142857142857
+      },
+      {
+        "stage_id": 12,
+        "active_ms": 33,
+        "idle_ms": 247,
+        "bubble_pct": 88.21428571428571
+      },
+      {
+        "stage_id": 13,
+        "active_ms": 33,
+        "idle_ms": 247,
+        "bubble_pct": 88.21428571428571
+      },
+      {
+        "stage_id": 14,
+        "active_ms": 32,
+        "idle_ms": 248,
+        "bubble_pct": 88.57142857142857
+      },
+      {
+        "stage_id": 15,
+        "active_ms": 32,
+        "idle_ms": 248,
+        "bubble_pct": 88.57142857142857
+      }
+    ]
+  },
+  {
+    "stages": 16,
+    "microbatches": 4,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 313,
+    "theoretical_bubble_pct": 78.94736842105263,
+    "measured_bubble_pct": 79.0135782747604,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 8,
+        "active_ms": 65,
+        "idle_ms": 248,
+        "bubble_pct": 79.2332268370607
+      },
+      {
+        "stage_id": 9,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 10,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 11,
+        "active_ms": 65,
+        "idle_ms": 248,
+        "bubble_pct": 79.2332268370607
+      },
+      {
+        "stage_id": 12,
+        "active_ms": 66,
+        "idle_ms": 247,
+        "bubble_pct": 78.91373801916933
+      },
+      {
+        "stage_id": 13,
+        "active_ms": 65,
+        "idle_ms": 248,
+        "bubble_pct": 79.2332268370607
+      },
+      {
+        "stage_id": 14,
+        "active_ms": 65,
+        "idle_ms": 248,
+        "bubble_pct": 79.2332268370607
+      },
+      {
+        "stage_id": 15,
+        "active_ms": 65,
+        "idle_ms": 248,
+        "bubble_pct": 79.2332268370607
+      }
+    ]
+  },
+  {
+    "stages": 16,
+    "microbatches": 8,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 380,
+    "theoretical_bubble_pct": 65.21739130434783,
+    "measured_bubble_pct": 65.2796052631579,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 133,
+        "idle_ms": 247,
+        "bubble_pct": 65
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 132,
+        "idle_ms": 248,
+        "bubble_pct": 65.26315789473685
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 131,
+        "idle_ms": 249,
+        "bubble_pct": 65.52631578947368
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 131,
+        "idle_ms": 249,
+        "bubble_pct": 65.52631578947368
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 131,
+        "idle_ms": 249,
+        "bubble_pct": 65.52631578947368
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 131,
+        "idle_ms": 249,
+        "bubble_pct": 65.52631578947368
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 132,
+        "idle_ms": 248,
+        "bubble_pct": 65.26315789473685
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 131,
+        "idle_ms": 249,
+        "bubble_pct": 65.52631578947368
+      },
+      {
+        "stage_id": 8,
+        "active_ms": 132,
+        "idle_ms": 248,
+        "bubble_pct": 65.26315789473685
+      },
+      {
+        "stage_id": 9,
+        "active_ms": 132,
+        "idle_ms": 248,
+        "bubble_pct": 65.26315789473685
+      },
+      {
+        "stage_id": 10,
+        "active_ms": 133,
+        "idle_ms": 247,
+        "bubble_pct": 65
+      },
+      {
+        "stage_id": 11,
+        "active_ms": 133,
+        "idle_ms": 247,
+        "bubble_pct": 65
+      },
+      {
+        "stage_id": 12,
+        "active_ms": 133,
+        "idle_ms": 247,
+        "bubble_pct": 65
+      },
+      {
+        "stage_id": 13,
+        "active_ms": 133,
+        "idle_ms": 247,
+        "bubble_pct": 65
+      },
+      {
+        "stage_id": 14,
+        "active_ms": 132,
+        "idle_ms": 248,
+        "bubble_pct": 65.26315789473685
+      },
+      {
+        "stage_id": 15,
+        "active_ms": 131,
+        "idle_ms": 249,
+        "bubble_pct": 65.52631578947368
+      }
+    ]
+  },
+  {
+    "stages": 16,
+    "microbatches": 16,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 513,
+    "theoretical_bubble_pct": 48.38709677419355,
+    "measured_bubble_pct": 48.58674463937623,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 265,
+        "idle_ms": 248,
+        "bubble_pct": 48.343079922027286
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 265,
+        "idle_ms": 248,
+        "bubble_pct": 48.343079922027286
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 265,
+        "idle_ms": 248,
+        "bubble_pct": 48.343079922027286
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 264,
+        "idle_ms": 249,
+        "bubble_pct": 48.53801169590643
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 264,
+        "idle_ms": 249,
+        "bubble_pct": 48.53801169590643
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 264,
+        "idle_ms": 249,
+        "bubble_pct": 48.53801169590643
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 264,
+        "idle_ms": 249,
+        "bubble_pct": 48.53801169590643
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 264,
+        "idle_ms": 249,
+        "bubble_pct": 48.53801169590643
+      },
+      {
+        "stage_id": 8,
+        "active_ms": 263,
+        "idle_ms": 250,
+        "bubble_pct": 48.732943469785575
+      },
+      {
+        "stage_id": 9,
+        "active_ms": 264,
+        "idle_ms": 249,
+        "bubble_pct": 48.53801169590643
+      },
+      {
+        "stage_id": 10,
+        "active_ms": 263,
+        "idle_ms": 250,
+        "bubble_pct": 48.732943469785575
+      },
+      {
+        "stage_id": 11,
+        "active_ms": 263,
+        "idle_ms": 250,
+        "bubble_pct": 48.732943469785575
+      },
+      {
+        "stage_id": 12,
+        "active_ms": 263,
+        "idle_ms": 250,
+        "bubble_pct": 48.732943469785575
+      },
+      {
+        "stage_id": 13,
+        "active_ms": 263,
+        "idle_ms": 250,
+        "bubble_pct": 48.732943469785575
+      },
+      {
+        "stage_id": 14,
+        "active_ms": 263,
+        "idle_ms": 250,
+        "bubble_pct": 48.732943469785575
+      },
+      {
+        "stage_id": 15,
+        "active_ms": 263,
+        "idle_ms": 250,
+        "bubble_pct": 48.732943469785575
+      }
+    ]
+  },
+  {
+    "stages": 16,
+    "microbatches": 32,
+    "stage_latency_ms": 5,
+    "total_wall_time_ms": 783,
+    "theoretical_bubble_pct": 31.914893617021278,
+    "measured_bubble_pct": 31.82471264367817,
+    "stage_metrics": [
+      {
+        "stage_id": 0,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 1,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 2,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 3,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 4,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 5,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 6,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 7,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 8,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 9,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 10,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 11,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 12,
+        "active_ms": 534,
+        "idle_ms": 249,
+        "bubble_pct": 31.800766283524908
+      },
+      {
+        "stage_id": 13,
+        "active_ms": 533,
+        "idle_ms": 250,
+        "bubble_pct": 31.928480204342275
+      },
+      {
+        "stage_id": 14,
+        "active_ms": 533,
+        "idle_ms": 250,
+        "bubble_pct": 31.928480204342275
+      },
+      {
+        "stage_id": 15,
+        "active_ms": 533,
+        "idle_ms": 250,
+        "bubble_pct": 31.928480204342275
+      }
+    ]
+  }
+]
