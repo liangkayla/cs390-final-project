@@ -5,25 +5,26 @@ import (
 	"math"
 	"math/rand"
 	"strings"
-	"gonum.org/v1/gonum/mat" // optimized matrix operations in Go
 	"sync"
 	"time"
+
+	"gonum.org/v1/gonum/mat" // optimized matrix operations in Go
 )
 
 const Bandwidth = 50e9 // 50 GB/s going by NVLink
 
 type Metrics struct {
-	FLOPs	float64
-	ComputeTime	float64
-	TotalCommTime	float64
-	TotalTime float64
+	FLOPs         float64
+	ComputeTime   float64
+	TotalCommTime float64
+	TotalTime     float64
 }
 
 type CommunicationEvent struct {
-    Op string
-    NumGPUs int
-    BytesPerGPU int
-    CommTime float64
+	Op          string
+	NumGPUs     int
+	BytesPerGPU int
+	CommTime    float64
 }
 
 // GEMM represents one matrix-multiply layer in the MLP.
@@ -32,14 +33,14 @@ type GEMM struct {
 	Split  SplitMethod
 	NumGPU int
 
-	// Inputs 
-	X *mat.Dense // design matrix 
-	A *mat.Dense // weights 
+	// Inputs
+	X *mat.Dense // design matrix
+	A *mat.Dense // weights
 
 	// Outputs
 	Output     *mat.Dense
 	CommEvents []CommunicationEvent
-	SyncPoints int 
+	SyncPoints int
 }
 
 func gemmFLOPs(m, n, k int) float64 {
@@ -76,12 +77,12 @@ func (s SplitMethod) String() string {
 // Matrix: using gonum/mat library to get true parallel matrix ops
 // ─────────────────────────────────────────────
 
-// return a new empty matrix 
+// return a new empty matrix
 func NewMatrix(rows, cols int) *mat.Dense {
 	return mat.NewDense(rows, cols, nil)
 }
 
-// return a new matrix filled with random floats 
+// return a new matrix filled with random floats
 func NewRandMatrix(rows, cols int, rng *rand.Rand) *mat.Dense {
 	data := make([]float64, rows*cols)
 	for i := range data {
@@ -146,26 +147,26 @@ func GeLU(m *mat.Dense) *mat.Dense {
 func AllReduce(parts []*mat.Dense) (*mat.Dense, CommunicationEvent) {
 	start := time.Now()
 
-    r, c := parts[0].Dims()
-    bytes := 2 * r * c * 8
+	r, c := parts[0].Dims()
+	bytes := 2 * r * c * 8
 
-    simulated := time.Duration(float64(bytes)/Bandwidth * float64(time.Second))
+	simulated := time.Duration(float64(bytes) / Bandwidth * float64(time.Second))
 
-    time.Sleep(simulated)
+	time.Sleep(simulated)
 
-    var result mat.Dense
-    result.CloneFrom(parts[0])
-    for _, p := range parts[1:] {
-        result.Add(&result, p)
-    }
+	var result mat.Dense
+	result.CloneFrom(parts[0])
+	for _, p := range parts[1:] {
+		result.Add(&result, p)
+	}
 
-    commTime := time.Since(start).Seconds()
+	commTime := time.Since(start).Seconds()
 
 	return &result, CommunicationEvent{
 		Op:          "AllReduce",
 		NumGPUs:     len(parts),
 		BytesPerGPU: bytes,
-		CommTime: commTime,
+		CommTime:    commTime,
 	}
 }
 
@@ -191,18 +192,18 @@ func AllReduce(parts []*mat.Dense) (*mat.Dense, CommunicationEvent) {
 // }
 
 func SplitColumns(M *mat.Dense, n int) []*mat.Dense {
-    r, c := M.Dims()
-    if c%n != 0 {
-        panic("cols not divisible")
-    }
-    w := c / n
-    parts := make([]*mat.Dense, n)
-    for i := 0; i < n; i++ {
-        part := mat.NewDense(r, w, nil)
-        part.CloneFrom(M.Slice(0, r, i*w, (i+1)*w))  // ← copy, not view
-        parts[i] = part
-    }
-    return parts
+	r, c := M.Dims()
+	if c%n != 0 {
+		panic("cols not divisible")
+	}
+	w := c / n
+	parts := make([]*mat.Dense, n)
+	for i := 0; i < n; i++ {
+		part := mat.NewDense(r, w, nil)
+		part.CloneFrom(M.Slice(0, r, i*w, (i+1)*w)) // ← copy, not view
+		parts[i] = part
+	}
+	return parts
 }
 
 // SplitRows splits matrix M into `n` row-wise partitions.
@@ -216,24 +217,24 @@ func SplitColumns(M *mat.Dense, n int) []*mat.Dense {
 // 	h := r / n
 // 	parts := make([]*mat.Dense, n)
 
-// 	for i := 0; i < n; i++ {
-// 		parts[i] = M.Slice(i*h, (i+1)*h, 0, c).(*mat.Dense)
-// 	}
-// 	return parts
-// }
+//		for i := 0; i < n; i++ {
+//			parts[i] = M.Slice(i*h, (i+1)*h, 0, c).(*mat.Dense)
+//		}
+//		return parts
+//	}
 func SplitRows(M *mat.Dense, n int) []*mat.Dense {
-    r, c := M.Dims()
-    if r%n != 0 {
-        panic("rows not divisible")
-    }
-    h := r / n
-    parts := make([]*mat.Dense, n)
-    for i := 0; i < n; i++ {
-        part := mat.NewDense(h, c, nil)
-        part.CloneFrom(M.Slice(i*h, (i+1)*h, 0, c))  // ← copy, not view
-        parts[i] = part
-    }
-    return parts
+	r, c := M.Dims()
+	if r%n != 0 {
+		panic("rows not divisible")
+	}
+	h := r / n
+	parts := make([]*mat.Dense, n)
+	for i := 0; i < n; i++ {
+		part := mat.NewDense(h, c, nil)
+		part.CloneFrom(M.Slice(i*h, (i+1)*h, 0, c)) // ← copy, not view
+		parts[i] = part
+	}
+	return parts
 }
 
 // ConcatColumns concatenates matrices horizontally: [M1 | M2 | ...] → (r, sum(c_i))
@@ -278,11 +279,9 @@ func ConcatRows(parts []*mat.Dense) *mat.Dense {
 	return out
 }
 
-
 func (e CommunicationEvent) String() string {
 	return fmt.Sprintf("%s(gpus=%d, bytes/gpu=%d)", e.Op, e.NumGPUs, e.BytesPerGPU)
 }
-
 
 func NewGEMM(name string, split SplitMethod, numGPU int) *GEMM {
 	return &GEMM{Name: name, Split: split, NumGPU: numGPU}
@@ -295,18 +294,18 @@ func NewGEMM(name string, split SplitMethod, numGPU int) *GEMM {
 // MLPResult captures all metrics for one end-to-end MLP forward pass.
 type MLPResult struct {
 	StrategyName string
-    Description string
+	Description  string
 
-    Output *mat.Dense
+	Output *mat.Dense
 
-    CommEvents []CommunicationEvent
-    SyncPoints int
-    TotalCommBytes int
+	CommEvents     []CommunicationEvent
+	SyncPoints     int
+	TotalCommBytes int
 
 	Metrics Metrics
 
-    RelativeError float64
-    Correct bool
+	RelativeError float64
+	Correct       bool
 }
 
 func (r *MLPResult) TotalCommMB() float64 {
@@ -315,86 +314,64 @@ func (r *MLPResult) TotalCommMB() float64 {
 
 // groundTruth computes the reference output on a single GPU: GeLU(X·A1) · B
 func groundTruth(X, A, B *mat.Dense) *mat.Dense {
-    Y := GeLU(MatMul(X, A))
-    return MatMul(Y, B)
+	Y := GeLU(MatMul(X, A))
+	return MatMul(Y, B)
 }
 
-// ── (Paper optimal): Column-split A, row-split B ──────────────────
+// ── Task 1: strategyPaperOptimal ─────────────────────────────────────────────
 //
-//   GPU_i receives: X (full), A_i (columns), B_i (rows)
-//   Forward:
-//     Y_i = GeLU(X · A_i)          ← no sync needed before GeLU
-//     Z_i = Y_i · B_i              ← each GPU holds partial output
-//     Z   = AllReduce(Z_0,...,Z_n) ← single all-reduce
+// Column-split strategy — Figure 3(b) of Megatron-LM (Shoeybi et al., 2019).
 //
-// This is Figure 3a of the Megatron-LM paper.
-// TODO: check if correct num of syncPts
+// Partition:
+//   - A split column-wise: GPU i holds A_i of shape (k, h/n)
+//   - B split row-wise:    GPU i holds B_i of shape (h/n, c)
+//   - X replicated on every GPU
+//
+// Forward pass on GPU i (all GPUs run in parallel):
+//  1. Y_i = GeLU(X · A_i)    shape (m, h/n) — no sync needed before GeLU
+//  2. Z_i = Y_i · B_i        shape (m, c)   — partial output
+//     After: Z = AllReduce(Z_0, …, Z_{n-1})    — single all-reduce
+//
+// Key insight: column-sharding A means X·A_i is self-contained per GPU,
+// so GeLU can be applied locally with no prior synchronisation.
 func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
-    events := []CommunicationEvent{}
+	events := []CommunicationEvent{}
 	computeTimes := make([]float64, numGPU)
-    syncPts := 1 //function g in the paper is allReduce on forward pass, function f allReduce in backward pass
+	syncPts := 1 // one AllReduce on the forward pass (f in the paper)
 
-    // Partition weights
-    As := SplitColumns(A, numGPU)
-    Bs := SplitRows(B, numGPU)
+	// TODO (1/3): Split A column-wise and B row-wise into numGPU shards.
+	// Hint: use SplitColumns and SplitRows.
+	var As, Bs []*mat.Dense
+	_, _ = As, Bs // remove this line once you assign As and Bs
 
-    Yparts := make([]*mat.Dense, numGPU)
+	Yparts := make([]*mat.Dense, numGPU)
 	Zparts := make([]*mat.Dense, numGPU)
 
-    // ── Stage 1: X·A_i (parallel)
-    var wg sync.WaitGroup
-    for i := 0; i < numGPU; i++ {
-        wg.Add(1)
+	// TODO (2/3): In parallel, compute Y_i = GeLU(X · A_i) and Z_i = Y_i · B_i.
+	// Use a sync.WaitGroup and one goroutine per GPU (index i).
+	// Record wall-clock compute time for each GPU in computeTimes[i].
+	// Store results in Yparts[i] and Zparts[i].
+	var wg sync.WaitGroup
+	_ = wg // remove this line once you use wg
 
-        go func(i int) {
-            defer wg.Done()
-			start := time.Now()
-            Yi := MatMul(X, As[i])
-			Yi = GeLU(Yi)
-			elapsed := time.Since(start).Seconds()
-        	computeTimes[i] = elapsed
-            Yparts[i] = Yi
-        }(i)
-    }
-    wg.Wait()
+	// TODO (3/3): All-reduce the Zparts shards into the final output Z.
+	// Append the returned CommunicationEvent to events.
+	var Z *mat.Dense
+	_ = Z // remove this line once you assign Z
 
-    // ── Stage 2: Y_i · B_i (parallel)
-    for i := 0; i < numGPU; i++ {
-    	wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
-
-			start := time.Now()
-
-			var C mat.Dense
-			C.Mul(Yparts[i], Bs[i])
-
-			elapsed := time.Since(start).Seconds()
-			computeTimes[i] += elapsed
-
-			Zparts[i] = &C
-		}(i)
-	}
-	wg.Wait()	
-
-    // ── AllReduce, number of syncpts this contributes to is accounted for in beginning
-    Z, ev := AllReduce(Zparts)
-    events = append(events, ev)
-
-    totalBytes := 0
+	totalBytes := 0
 	totalCommTime := 0.0
-    for _, e := range events {
-        totalBytes += e.BytesPerGPU * e.NumGPUs
+	for _, e := range events {
+		totalBytes += e.BytesPerGPU * e.NumGPUs
 		totalCommTime += e.CommTime
-    }
+	}
 
 	r, k := X.Dims()
 	_, h := A.Dims()
 	_, c := B.Dims()
-	
+
 	flopsGEMM1 := gemmFLOPs(r, h/numGPU, k) * float64(numGPU)
 	flopsGEMM2 := gemmFLOPs(r, c, h/numGPU) * float64(numGPU)
-
 	totalFLOPs := flopsGEMM1 + flopsGEMM2
 
 	maxComputeTime := 0.0
@@ -404,108 +381,102 @@ func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 		}
 	}
 
-	metrics := Metrics{
-		FLOPs: totalFLOPs,
-		ComputeTime: maxComputeTime,
-		TotalCommTime: totalCommTime,
-		TotalTime: maxComputeTime+totalCommTime,
+	return MLPResult{
+		StrategyName:   "Paper Optimal (col-split A, row-split B)",
+		Description:    "Parallel GEMMs + 1 AllReduce",
+		Output:         Z,
+		CommEvents:     events,
+		SyncPoints:     syncPts,
+		TotalCommBytes: totalBytes,
+		Metrics: Metrics{
+			FLOPs:         totalFLOPs,
+			ComputeTime:   maxComputeTime,
+			TotalCommTime: totalCommTime,
+			TotalTime:     maxComputeTime + totalCommTime,
+		},
 	}
-
-    return MLPResult{
-        StrategyName: "Paper Optimal (col-split A, row-split B)",
-        Description:  "Parallel GEMMs + 1 AllReduce",
-        Output:       Z,
-        CommEvents:   events,
-        SyncPoints:   syncPts,
-        TotalCommBytes: totalBytes,
-		Metrics: metrics,
-    }
 }
 
-// ── Row-split A, column split X ──────────────────
-//	"Row-Split" method
-//   GPU_i receives: X_i (columns), A_j (rows), B_i (rows)
-//   Forward:
-//     Y_i = GeLU(X · A_i)          ← no sync needed before GeLU
-//     Z_i = Y_i · B_i              ← each GPU holds partial output
-//     Z   = AllReduce(Z_0,...,Z_n) ← single all-reduce
+// ── Task 2: strategyPaperSuboptimal ──────────────────────────────────────────
 //
-// Mentioned in Megatron-LM paper as suboptimal 
+// Row-split strategy — discussed and dismissed in Megatron-LM because it
+// requires an extra AllReduce mid-block, breaking pipeline efficiency.
+//
+// Partition:
+//   - X split column-wise: GPU i holds X_i of shape (m, k/n)
+//   - A split row-wise:    GPU i holds A_i of shape (k/n, h)
+//   - B split column-wise: GPU i holds B_i of shape (h, c/n)
+//
+// Forward pass:
+//  1. (Parallel) P_i = X_i · A_i          shape (m, h) — partial inner product
+//  2. (Sync)     P = AllReduce(P_0,…,P_{n-1})           — must sum before GeLU
+//  3. Y = GeLU(P)                             — applied to full sum
+//  4. (Parallel) Z_i = Y · B_i            shape (m, c/n)
+//  5. Z = ConcatColumns(Z_0,…) shape (m, c)  — no extra AllReduce
+//
+// Key insight: row-sharding A means partial products are additive fragments of
+// XA. Since GeLU(P_0+P_1) ≠ GeLU(P_0)+GeLU(P_1), GPUs must sync before GeLU.
 func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
-    events := []CommunicationEvent{}
+	events := []CommunicationEvent{}
 	computeTimes := make([]float64, numGPU)
-    syncPts := 1
+	syncPts := 1 // backward-pass conjugate (function f in the paper)
 
-    // Partition weights:
-	//   X split by cols  (inner dimension) → each GPU holds a col shard X_i
-	//   A split by rows  (inner dimension) → each GPU holds a row shard A_i
-	//   X_i and A_i are matched shards: X_i is (m × k/n), A_i is (k/n × h)
-	//   B split by cols                   → each GPU holds a col shard B_i
-	As := SplitRows(A, numGPU)
-	Bs := SplitColumns(B, numGPU)
-	Xs := SplitColumns(X, numGPU)
+	// TODO (1/4): Split X column-wise, A row-wise, and B column-wise into numGPU shards.
+	// Hint: use SplitColumns for X and B, SplitRows for A.
+	var As, Bs, Xs []*mat.Dense
+	_, _, _ = As, Bs, Xs // remove this line once you assign the slices
 
-    Yparts := make([]*mat.Dense, numGPU) //here, we have to sum the intermediate Ys before passing it to GeLU
+	Pparts := make([]*mat.Dense, numGPU)
 	Zparts := make([]*mat.Dense, numGPU)
 
-    // ── Stage 1: X_i·A_i (parallel)
-    var wg sync.WaitGroup
-
-	//1a: compute intermediate Y matrices
+	// Stage 1: compute partial products P_i = X_i · A_i in parallel.
+	var wg sync.WaitGroup
 	for i := 0; i < numGPU; i++ {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
 			start := time.Now()
-			Yi := MatMul(Xs[i], As[i]) // ← Xs[i] instead of full X
+			// TODO (2/4): Compute P_i = MatMul(Xs[i], As[i]) and store in Pparts[i].
 			computeTimes[i] = time.Since(start).Seconds()
-			Yparts[i] = Yi
-		}(i)
-	}
-	wg.Wait()	
-
-	// ── Stage 1b: AllReduce + GeLU ────────────────────────────────────────────
-	// Sum partial Ys across GPUs to get the true XA, then apply GeLU.
-	// This is the unavoidable mid-block sync that makes this approach suboptimal.
-	Yfull, ev := AllReduce(Yparts)
-	events = append(events, ev)
-	syncPts++
-	geluY := GeLU(Yfull)
-
-    // ── Stage 2: Y·B_i (parallel) ────────────────────────────────────────────
-	// Every GPU holds the full Y = GeLU(XA). Each multiplies by its B col-shard
-	// independently — no sync needed. Outputs are column partitions of the
-	// final result and are concatenated horizontally to form Z.
-	for i := 0; i < numGPU; i++ {
-		wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
-			start := time.Now()
-			var C mat.Dense
-			C.Mul(geluY, Bs[i])
-			computeTimes[i] += time.Since(start).Seconds()
-			Zparts[i] = &C
 		}(i)
 	}
 	wg.Wait()
 
-	// Concatenate column shards horizontally → final output Z (shape m×c)
-	Z := ConcatColumns(Zparts) //AllReduce already counted in beginning
+	// Stage 2: AllReduce partial products, then apply GeLU.
+	// This is the unavoidable mid-block sync that makes this strategy suboptimal.
+	// TODO (3/4): AllReduce Pparts → Pfull, append the event to events, increment
+	//             syncPts, then compute geluY = GeLU(Pfull).
+	var geluY *mat.Dense
+	_ = geluY // remove this line once you assign geluY
 
-    totalBytes := 0
+	// Stage 3: compute Z_i = geluY · B_i in parallel.
+	for i := 0; i < numGPU; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			start := time.Now()
+			// TODO (4/4): Compute Z_i = MatMul(geluY, Bs[i]) and store in Zparts[i].
+			computeTimes[i] += time.Since(start).Seconds()
+		}(i)
+	}
+	wg.Wait()
+
+	// Concatenate column shards horizontally → final output Z (no AllReduce needed).
+	Z := ConcatColumns(Zparts)
+
+	totalBytes := 0
 	totalCommTime := 0.0
-    for _, e := range events {
-        totalBytes += e.BytesPerGPU * e.NumGPUs
+	for _, e := range events {
+		totalBytes += e.BytesPerGPU * e.NumGPUs
 		totalCommTime += e.CommTime
-    }
+	}
 
 	r, k := X.Dims()
 	_, h := A.Dims()
 	_, c := B.Dims()
-	
-	flopsGEMM1 := gemmFLOPs(r, h/numGPU, k) * float64(numGPU)
-	flopsGEMM2 := gemmFLOPs(r, c, h/numGPU) * float64(numGPU)
 
+	flopsGEMM1 := gemmFLOPs(r, h, k/numGPU) * float64(numGPU)
+	flopsGEMM2 := gemmFLOPs(r, c/numGPU, h) * float64(numGPU)
 	totalFLOPs := flopsGEMM1 + flopsGEMM2
 
 	maxComputeTime := 0.0
@@ -515,57 +486,54 @@ func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 		}
 	}
 
-	metrics := Metrics{
-		FLOPs: totalFLOPs,
-		ComputeTime: maxComputeTime,
-		TotalCommTime: totalCommTime,
-		TotalTime: maxComputeTime+totalCommTime,
+	return MLPResult{
+		StrategyName:   "Paper Suboptimal (row-split A, col-split B)",
+		Description:    "Parallel GEMMs + AllReduce before GeLU + parallel GEMMs, output col-concatenated",
+		Output:         Z,
+		CommEvents:     events,
+		SyncPoints:     syncPts,
+		TotalCommBytes: totalBytes,
+		Metrics: Metrics{
+			FLOPs:         totalFLOPs,
+			ComputeTime:   maxComputeTime,
+			TotalCommTime: totalCommTime,
+			TotalTime:     maxComputeTime + totalCommTime,
+		},
 	}
-
-    return MLPResult{
-        StrategyName: "Paper Suboptimal (row-split A, col-split B)",
-        Description:  "Parallel GEMMs + AllReduce before GeLU + parallel GEMMs, output col-concatenated",
-        Output:       Z,
-        CommEvents:   events,
-        SyncPoints:   syncPts,
-        TotalCommBytes: totalBytes,
-		Metrics: metrics,
-    }
 }
-
 
 // ── No split (single GPU baseline) ────────────────────────────────
 func strategyNoSplit(X, A, B *mat.Dense, numGPU int) MLPResult {
-    start := time.Now()
+	start := time.Now()
 
-    Y := GeLU(MatMul(X, A))
-    Z := MatMul(Y, B)
+	Y := GeLU(MatMul(X, A))
+	Z := MatMul(Y, B)
 
-    computeTime := time.Since(start).Seconds()
+	computeTime := time.Since(start).Seconds()
 
-    // FLOPs (full, no partition)
-    r, k := X.Dims()
-    _, h := A.Dims()
-    _, c := B.Dims()
+	// FLOPs (full, no partition)
+	r, k := X.Dims()
+	_, h := A.Dims()
+	_, c := B.Dims()
 
-    flops := gemmFLOPs(r, h, k) + gemmFLOPs(r, c, h)
+	flops := gemmFLOPs(r, h, k) + gemmFLOPs(r, c, h)
 
-    metrics := Metrics{
-        FLOPs: flops,
-        ComputeTime: computeTime,
-        TotalCommTime: 0,
-		TotalTime: computeTime,
-    }
+	metrics := Metrics{
+		FLOPs:         flops,
+		ComputeTime:   computeTime,
+		TotalCommTime: 0,
+		TotalTime:     computeTime,
+	}
 
-    return MLPResult{
-        StrategyName:   "No Split (single GPU baseline)",
-        Description:    "Full computation on one GPU, no communication",
-        Output:         Z,
-        CommEvents:     nil,
-        SyncPoints:     0,
-        TotalCommBytes: 0,
-        Metrics:        metrics,
-    }
+	return MLPResult{
+		StrategyName:   "No Split (single GPU baseline)",
+		Description:    "Full computation on one GPU, no communication",
+		Output:         Z,
+		CommEvents:     nil,
+		SyncPoints:     0,
+		TotalCommBytes: 0,
+		Metrics:        metrics,
+	}
 }
 
 // ─────────────────────────────────────────────
@@ -645,7 +613,7 @@ func printReport(cfg ExperimentConfig, results []MLPResult) {
 		fmt.Printf("    Sync points      : %d\n", r.SyncPoints)
 		fmt.Printf("    Total comm data  : %.3f MB\n", r.TotalCommMB())
 		fmt.Printf("    Relative error   : %.2e  ", r.RelativeError)
-		
+
 		if r.Correct {
 			fmt.Println("✓ CORRECT")
 		} else {
