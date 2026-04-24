@@ -1,2 +1,2 @@
- - lab/gemm_test.go - claude.ai was used to come up with comprehensive tests.
+ - lab/gemm_test.go - claude.ai was used to help come up with comprehensive tests.
  - lab/gemm.go - claude.ai was used to improve comments written for the code sections that students need to fill out.
