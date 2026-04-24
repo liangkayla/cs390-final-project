@@ -441,7 +441,7 @@ func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 
 	// Stage 2: AllReduce partial products, then apply GeLU.
 	// This is the unavoidable mid-block sync that makes this strategy suboptimal.
-	// TODO (3/4): AllReduce Pparts → Pfull, append the event to events, increment syncPts, then compute geluY = GeLU(Pfull).
+	// TODO (3/4): AllReduce Pparts -> Pfull, append the event to events, increment syncPts, then compute geluY = GeLU(Pfull).
 	var geluY *mat.Dense
 	_ = geluY // remove this line once you assign geluY
 
