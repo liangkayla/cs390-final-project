@@ -332,8 +332,7 @@ func groundTruth(X, A, B *mat.Dense) *mat.Dense {
 //  2. Z_i = Y_i · B_i        shape (m, c)   — partial output
 //     After: Z = AllReduce(Z_0, …, Z_{n-1})    — single all-reduce
 //
-// Key insight: column-sharding A means X·A_i is self-contained per GPU,
-// so GeLU can be applied locally with no prior synchronisation.
+// Key insight: column-sharding A means X·A_i is self-contained per GPU, so GeLU can be applied locally with no prior synchronisation.
 func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 	events := []CommunicationEvent{}
 	computeTimes := make([]float64, numGPU)
@@ -399,8 +398,7 @@ func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 
 // ── Task 2: strategyPaperSuboptimal ──────────────────────────────────────────
 //
-// Row-split strategy — discussed and dismissed in Megatron-LM because it
-// requires an extra AllReduce mid-block, breaking pipeline efficiency.
+// Row-split strategy — discussed and dismissed in Megatron-LM because it requires an extra AllReduce mid-block, breaking pipeline efficiency.
 //
 // Partition:
 //   - X split column-wise: GPU i holds X_i of shape (m, k/n)
@@ -414,8 +412,7 @@ func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 //  4. (Parallel) Z_i = Y · B_i            shape (m, c/n)
 //  5. Z = ConcatColumns(Z_0,…) shape (m, c)  — no extra AllReduce
 //
-// Key insight: row-sharding A means partial products are additive fragments of
-// XA. Since GeLU(P_0+P_1) ≠ GeLU(P_0)+GeLU(P_1), GPUs must sync before GeLU.
+// Key insight: row-sharding A means partial products are additive fragments of XA. Since GeLU(P_0+P_1) ≠ GeLU(P_0)+GeLU(P_1), GPUs must sync before GeLU.
 func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 	events := []CommunicationEvent{}
 	computeTimes := make([]float64, numGPU)
@@ -444,8 +441,7 @@ func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 
 	// Stage 2: AllReduce partial products, then apply GeLU.
 	// This is the unavoidable mid-block sync that makes this strategy suboptimal.
-	// TODO (3/4): AllReduce Pparts → Pfull, append the event to events, increment
-	//             syncPts, then compute geluY = GeLU(Pfull).
+	// TODO (3/4): AllReduce Pparts → Pfull, append the event to events, increment syncPts, then compute geluY = GeLU(Pfull).
 	var geluY *mat.Dense
 	_ = geluY // remove this line once you assign geluY
 
