@@ -58,14 +58,6 @@ Because this is a simulation, parallelism is modelled with Go goroutines and
 `sync.WaitGroup`.  Each goroutine records its own wall-clock compute time;
 the reported `ComputeTime` is the maximum across GPUs (i.e., the critical path).
 
-## Setup
-
-```bash
-go mod init gemm_lab   # if you do not already have a go.mod
-go get gonum.org/v1/gonum/mat
-go test -v             # all tests should fail until you implement the strategies
-```
-
 ## Tasks
 
 Complete **two functions** in `gemm.go`.  Do not modify any other files.
@@ -94,7 +86,7 @@ the forward pass.
 Z = AllReduce(Z_0, Z_1, …, Z_{n-1})
 ```
 
-**Why is GeLU safe here?**  Because each GPU holds a *disjoint column shard*
+Because each GPU holds a *disjoint column shard*
 of `A`, the product `X·A_i` is already self-contained — it does not need to
 be summed with any other GPU's result before the activation.  GeLU can be
 applied locally, with no synchronisation.
@@ -108,8 +100,8 @@ applied locally, with no synchronisation.
 
 ### Task 2: `strategyPaperSuboptimal`
 
-This is the **row-split** strategy discussed (and dismissed) in the paper
-because it requires an **extra AllReduce in the middle** of the block, breaking
+This is the **row-split** strategy discussed in the paper, which is suboptimal
+because it requires an **extra AllReduce** in the middle of the block, breaking
 pipeline efficiency.
 
 **Partition:**
@@ -126,8 +118,7 @@ pipeline efficiency.
 4. *(Parallel)* `Z_i = Y · B_i`    — shape `(m, c/n)`, column shard of output
 5. `Z = ConcatColumns(Z_0, …, Z_{n-1})` — assemble final output, no AllReduce needed
 
-**Why is GeLU *not* safe here?**  Because each GPU holds a disjoint *row
-shard* of `A` (the inner dimension), the partial products `X_i·A_i` are
+Because each GPU holds a disjoint *row shard* of `A` (the inner dimension), the partial products `X_i·A_i` are
 additive fragments of the full `XA`.  Since GeLU is non-linear:
 
 ```
@@ -146,17 +137,19 @@ GeLU.  This mid-block AllReduce is the cost that makes this strategy worse than 
 
 ## Methods to Implement
 
-Fill in exactly these two function bodies in `gemm.go`:
+Fill in the implementation for these two functions in `gemm.go`:
 
 ```go
 func strategyPaperOptimal(X, A, B *mat.Dense, numGPU int) MLPResult
 func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult
 ```
 
-The detailed algorithm is spelled out in the docstrings above each function.
+The detailed algorithms are spelled out in the docstrings above each function.
 Study `strategyNoSplit` as a reference.
 
-### Useful helpers (already implemented)
+### Helper methods (implemented)
+
+Many useful helper methods have already been implemented in the starter code. They have been defined below.
 
 | Function | Description |
 |----------|-------------|
@@ -173,49 +166,12 @@ Study `strategyNoSplit` as a reference.
 ## Running Tests
 
 ```bash
-# Run all tests (should fail until you implement the two strategies):
+# Run all tests (should fail until you complete the implementation for the two strategy functions):
 go test -v
 
-# Run a single test by name:
+# Run a single test:
 go test -v -run TestPaperOptimal_SmallTwoGPU
 
 # Run the full experiment (prints a formatted report for five configs):
 go run gemm.go
 ```
-
-### Test overview
-
-| Test | What it checks |
-|------|---------------|
-| `TestNoSplit` | Baseline correctness, zero communication, correct FLOPs |
-| `TestPaperOptimal_SmallTwoGPU` | Optimal strategy: correct output, 1 AllReduce, 1 sync point |
-| `TestPaperOptimal_FourGPU` | Same properties at larger scale |
-| `TestPaperOptimal_FLOPs` | Reported FLOPs match theoretical count |
-| `TestPaperSuboptimal_SmallTwoGPU` | Suboptimal strategy: correct output, 1 AllReduce, 2 sync points |
-| `TestPaperSuboptimal_FourGPU` | Same properties at larger scale |
-| `TestPaperSuboptimal_FLOPs` | Reported FLOPs match theoretical count |
-| `TestBothStrategiesAgreeWithBaseline` | Both strategies numerically agree with single-GPU baseline across multiple configs |
-| `TestOptimalFewerSyncsThanSuboptimal` | Optimal always has fewer sync points than suboptimal |
-| `TestSplitColumnsAndRows` | Partition helpers round-trip correctly (provided, no changes needed) |
-| `TestAllReduce` | AllReduce sums partials correctly (provided, no changes needed) |
-| `TestGeLUNonLinearity` | GeLU(A+B) ≠ GeLU(A)+GeLU(B) — illustrates why row-split needs mid-block sync |
-
-## Discussion Questions
-
-After both strategies pass all tests, think about the following:
-
-1. **Sync points and throughput.** In a pipelined transformer, each extra
-   AllReduce in the forward pass has a corresponding one in the backward pass.
-   How many total AllReduces does each strategy require per MLP block per
-   training step?
-
-2. **Communication volume.** Does the size of the AllReduce tensor differ
-   between the two strategies?  What determines it?
-
-3. **Scaling.** Run `go run gemm.go` and examine how compute time and
-   communication time change as `numGPU` increases from 2 to 32.  Is the
-   speedup linear?  Why or why not?
-
-4. **When would the suboptimal strategy ever be preferred?**  Think about
-   cases where the column dimension `h` is not divisible by `n`, or where
-   memory per GPU is the binding constraint.
