@@ -48,7 +48,7 @@ func gemmFLOPs(m, n, k int) float64 {
 }
 
 // ─────────────────────────────────────────────
-// SECTION 1: Core types
+// Core types
 // ─────────────────────────────────────────────
 
 // SplitMethod describes how a weight matrix is partitioned across GPUs.
@@ -288,7 +288,7 @@ func NewGEMM(name string, split SplitMethod, numGPU int) *GEMM {
 }
 
 // ─────────────────────────────────────────────
-// SECTION 6: MLP Strategy implementations
+// MLP Strategy implementations
 // ─────────────────────────────────────────────
 
 // MLPResult captures all metrics for one end-to-end MLP forward pass.
