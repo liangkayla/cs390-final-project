@@ -1,2 +1,3 @@
+ - gemm.go - mostly claude.ai, as well as some chatgpt, were used to plan how to approach the experiment, as well as to help write code for it. 
  - lab/gemm_test.go - claude.ai was used to help come up with comprehensive tests.
  - lab/gemm.go - claude.ai was used to improve comments written for the code sections that students need to fill out.

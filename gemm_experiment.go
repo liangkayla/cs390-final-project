@@ -48,7 +48,7 @@ func gemmFLOPs(m, n, k int) float64 {
 }
 
 // ─────────────────────────────────────────────
-// SECTION 1: Core types
+// Core types
 // ─────────────────────────────────────────────
 
 // SplitMethod describes how a weight matrix is partitioned across GPUs.
@@ -176,20 +176,6 @@ func AllReduce(parts []*mat.Dense) (*mat.Dense, CommunicationEvent) {
 
 // SplitColumns splits matrix M into `n` column-wise partitions.
 // M has shape (r, c); each partition has shape (r, c/n).
-// func SplitColumns(M *mat.Dense, n int) []*mat.Dense {
-// 	r, c := M.Dims()
-// 	if c%n != 0 {
-// 		panic("cols not divisible")
-// 	}
-
-// 	w := c / n
-// 	parts := make([]*mat.Dense, n)
-
-// 	for i := 0; i < n; i++ {
-// 		parts[i] = M.Slice(0, r, i*w, (i+1)*w).(*mat.Dense)
-// 	}
-// 	return parts
-// }
 
 func SplitColumns(M *mat.Dense, n int) []*mat.Dense {
 	r, c := M.Dims()
@@ -288,7 +274,7 @@ func NewGEMM(name string, split SplitMethod, numGPU int) *GEMM {
 }
 
 // ─────────────────────────────────────────────
-// SECTION 6: MLP Strategy implementations
+// MLP Strategy implementations
 // ─────────────────────────────────────────────
 
 // MLPResult captures all metrics for one end-to-end MLP forward pass.
@@ -533,7 +519,7 @@ func strategyPaperSuboptimal(X, A, B *mat.Dense, numGPU int) MLPResult {
 }
 
 // ── No split (single GPU baseline) ────────────────────────────────
-func strategyNoSplit(X, A, B *mat.Dense, numGPU int) MLPResult {
+func strategyNoSplit(X, A, B *mat.Dense) MLPResult {
 	start := time.Now()
 
 	Y := GeLU(MatMul(X, A))
@@ -597,7 +583,7 @@ func runExperiment(cfg ExperimentConfig) {
 	ref := groundTruth(X, A, B)
 
 	strategies := []MLPResult{
-		strategyNoSplit(X, A, B, 1),
+		strategyNoSplit(X, A, B),
 		strategyPaperOptimal(X, A, B, cfg.NumGPU),
 		strategyPaperSuboptimal(X, A, B, cfg.NumGPU),
 	}
